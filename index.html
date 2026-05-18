@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title> رصد  الطرق   </title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0d2240;
+    --navy-light: #163459;
+    --gold: #c8a44a;
+    --gold-light: #e8c66a;
+    --white: #ffffff;
+    --bg: #f0f4f8;
+    --text: #1a2e4a;
+    --border: #d0dce8;
+    --success: #2ecc71;
+    --danger: #e74c3c;
+    --warning: #f39c12;
+    --muted: #7a8fa6;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Cairo', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+
+  /* ── Phone shell ── */
+  .phone-shell {
+    width: 100%; max-width: 390px;
+    background: #1c1c1e;
+    border-radius: 46px;
+    padding: 14px;
+    box-shadow: 0 24px 64px rgba(0,0,0,.35), 0 0 0 1px rgba(255,255,255,.06);
+  }
+  .phone-inner {
+    background: var(--white);
+    border-radius: 34px;
+    overflow: hidden;
+    height: 700px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── App bar ── */
+  .app-bar {
+    background: var(--navy);
+    padding: 16px 20px 12px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .app-bar .back-btn {
+    background: rgba(255,255,255,.1); border: none; cursor: pointer;
+    width: 32px; height: 32px; border-radius: 50%;
+    color: #fff; font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .app-bar h2 { color: #fff; font-size: 16px; font-weight: 700; flex: 1; }
+  .app-logo { width: 32px; height: 32px; background: var(--gold); border-radius: 8px;
+    display: flex; align-items: center; justify-content: center; font-size: 16px; }
+
+  /* ── Screen content ── */
+  .screen { display: none; flex: 1; flex-direction: column; }
+  .screen.active { display: flex; }
+  .screen-body { flex: 1; padding: 24px 20px; overflow-y: auto; }
+
+  /* ── Map screen ── */
+  .map-mock {
+    border-radius: 16px; overflow: hidden; margin-bottom: 16px;
+    background: linear-gradient(135deg, #e8f0d8 0%, #d4e6b5 40%, #c8daa0 100%);
+    height: 180px; position: relative;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .map-roads { position: absolute; inset: 0; }
+  .map-roads svg { width: 100%; height: 100%; }
+  .map-pin { font-size: 36px; position: relative; z-index: 2;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,.3));
+    animation: bounce 1s ease-in-out infinite alternate;
+  }
+  @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-8px); } }
+
+  /* ── Condition screen ── */
+  .cond-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .cond-card {
+    border: 2px solid var(--border); border-radius: 16px;
+    padding: 16px 12px; text-align: center; cursor: pointer;
+    transition: all .2s ease; background: var(--white);
+  }
+  .cond-card:hover { border-color: var(--navy); transform: translateY(-2px); }
+  .cond-card.selected { border-color: var(--gold); background: #fffbf0; }
+  .cond-card .icon { font-size: 32px; margin-bottom: 8px; }
+  .cond-card .name { font-size: 14px; font-weight: 700; color: var(--text); }
+  .cond-card.danger-card { grid-column: span 2; border-color: #fcd; background: #fff5f5; }
+  .cond-card.danger-card.selected { border-color: var(--danger); background: #fff0f0; }
+  .pothole-types { margin-top: 20px; }
+  .pothole-types h4 { font-size: 13px; color: var(--muted); margin-bottom: 12px; font-weight: 600; }
+  .ph-row { display: flex; gap: 10px; }
+  .ph-chip {
+    flex: 1; border: 2px solid var(--border); border-radius: 12px;
+    padding: 10px 6px; text-align: center; cursor: pointer;
+    font-size: 12px; font-weight: 700; color: var(--muted);
+    transition: all .2s;
+  }
+  .ph-chip:hover { border-color: var(--navy); }
+  .ph-chip.selected { border-color: var(--gold); color: var(--navy); background: #fffbf0; }
+  .ph-chip .ph-icon { font-size: 18px; margin-bottom: 4px; }
+
+  /* ── Photo screen ── */
+  .cam-frame {
+    border-radius: 20px; overflow: hidden; background: #111;
+    aspect-ratio: 4/3; position: relative;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 16px; cursor: pointer;
+    border: 2px dashed var(--border);
+  }
+  .cam-frame.has-image { border: none; }
+  .cam-frame img { width: 100%; height: 100%; object-fit: cover; border-radius: 18px; }
+  .cam-overlay {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+    color: var(--muted);
+  }
+  .cam-overlay .cam-icon { font-size: 40px; }
+  .cam-overlay p { font-size: 13px; text-align: center; }
+  .cam-frame.has-image .cam-overlay { display: none; }
+  .photo-actions { display: flex; gap: 10px; }
+  .photo-btn {
+    flex: 1; padding: 12px; border: 2px solid var(--border); border-radius: 14px;
+    background: #fff; cursor: pointer; font-family: 'Cairo', sans-serif;
+    font-size: 13px; font-weight: 700; color: var(--text);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: all .2s;
+  }
+  .photo-btn:hover { border-color: var(--navy); background: #f0f4f8; }
+  #file-input { display: none; }
+
+  /* ── Review screen ── */
+  .review-card {
+    background: #f8f9fb; border-radius: 16px; padding: 16px;
+    margin-bottom: 12px;
+  }
+  .review-row {
+    display: flex; align-items: flex-start; gap: 12px; padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .review-row:last-child { border-bottom: none; }
+  .review-icon { font-size: 20px; width: 28px; text-align: center; flex-shrink: 0; }
+  .review-info { flex: 1; }
+  .review-label { font-size: 11px; color: var(--muted); font-weight: 600; margin-bottom: 2px; }
+  .review-value { font-size: 14px; font-weight: 700; color: var(--text); }
+  .review-thumb { width: 60px; height: 60px; border-radius: 10px; object-fit: cover; flex-shrink: 0; }
+  .review-thumb-placeholder { width: 60px; height: 60px; border-radius: 10px; background: var(--border);
+    display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  .notes-field {
+    width: 100%; border: 2px solid var(--border); border-radius: 12px;
+    padding: 12px; font-family: 'Cairo', sans-serif; font-size: 13px;
+    resize: none; outline: none; margin-top: 8px;
+    transition: border-color .2s;
+  }
+  .notes-field:focus { border-color: var(--navy); }
+
+  /* ── Success screen ── */
+  .success-wrap {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; padding: 32px 24px; text-align: center;
+  }
+  .success-circle {
+    width: 100px; height: 100px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 44px; margin-bottom: 24px;
+    box-shadow: 0 12px 32px rgba(13,34,64,.35);
+    animation: pop .5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+  @keyframes pop { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .success-wrap h2 { font-size: 22px; font-weight: 900; color: var(--navy); margin-bottom: 8px; }
+  .success-wrap p { font-size: 14px; color: var(--muted); line-height: 1.8; }
+  .ref-badge {
+    background: #f0f4f8; border-radius: 12px; padding: 12px 20px; margin: 20px 0;
+    font-size: 13px; color: var(--muted);
+  }
+  .ref-badge strong { color: var(--navy); font-size: 18px; display: block; letter-spacing: 2px; }
+
+  /* ── Buttons ── */
+  .btn-primary {
+    width: 100%; padding: 16px; border: none; border-radius: 16px;
+    background: var(--navy); color: #fff;
+    font-family: 'Cairo', sans-serif; font-size: 16px; font-weight: 700;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
+    transition: all .2s; margin-top: 16px;
+    box-shadow: 0 4px 16px rgba(13,34,64,.25);
+  }
+  .btn-primary:hover { background: var(--navy-light); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(13,34,64,.3); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-primary.gold { background: var(--gold); color: var(--navy); box-shadow: 0 4px 16px rgba(200,164,74,.35); }
+  .btn-primary.gold:hover { background: var(--gold-light); }
+  .btn-ghost {
+    width: 100%; padding: 14px; border: 2px solid var(--border); border-radius: 16px;
+    background: transparent; font-family: 'Cairo', sans-serif; font-size: 15px; font-weight: 700;
+    cursor: pointer; color: var(--text); margin-top: 10px; transition: all .2s;
+  }
+  .btn-ghost:hover { border-color: var(--navy); color: var(--navy); }
+
+  /* ── Form fields ── */
+  .field-label { font-size: 13px; font-weight: 700; color: var(--muted); margin-bottom: 8px; display: block; }
+  .select-field {
+    width: 100%; padding: 14px 16px; border: 2px solid var(--border); border-radius: 14px;
+    font-family: 'Cairo', sans-serif; font-size: 14px; font-weight: 600;
+    background: #fff; color: var(--text); outline: none; cursor: pointer;
+    appearance: none; transition: border-color .2s;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%237a8fa6'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: left 12px center; background-size: 20px;
+  }
+  .select-field:focus { border-color: var(--navy); }
+  .time-badge {
+    display: flex; align-items: center; gap: 8px;
+    background: #f0f4f8; border-radius: 10px; padding: 10px 14px;
+    font-size: 13px; color: var(--muted); font-weight: 600;
+  }
+  .time-badge .time-val { color: var(--text); font-weight: 700; font-size: 15px; }
+  .info-note {
+    background: #fff8e8; border: 1.5px solid #f0d080; border-radius: 12px;
+    padding: 12px 14px; font-size: 12px; color: #8a6010; margin-bottom: 14px;
+    display: flex; align-items: flex-start; gap: 8px;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 500px) {
+    .phone-shell { border-radius: 30px; }
+    .phone-inner { border-radius: 20px; }
+    .cond-grid { gap: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="phone-shell">
+  <div class="phone-inner" style="position:relative;">
+
+    <div class="screen active" id="screen-1">
+      <div class="app-bar">
+        <h2>تحديد الموقع  </h2>
+       
+      </div>
+      <div class="screen-body">
+        <div class="map-mock">
+          <svg class="map-roads" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+            <rect width="400" height="200" fill="#d4e6b5"/>
+            <rect x="0" y="85" width="400" height="30" fill="#c8c8b0" opacity=".8"/>
+            <rect x="185" y="0" width="30" height="200" fill="#c8c8b0" opacity=".8"/>
+            <line x1="0" y1="100" x2="400" y2="100" stroke="white" stroke-width="1.5" stroke-dasharray="20,15"/>
+            <line x1="200" y1="0" x2="200" y2="200" stroke="white" stroke-width="1.5" stroke-dasharray="20,15"/>
+            <rect x="60" y="20" width="60" height="50" rx="6" fill="#a8c888" opacity=".6"/>
+            <rect x="280" y="130" width="70" height="45" rx="6" fill="#a8c888" opacity=".6"/>
+            <rect x="230" y="15" width="45" height="55" rx="6" fill="#a8c888" opacity=".5"/>
+          </svg>
+          <div class="map-pin">📍</div>
+        </div>
+
+
+        
+        <div class="info-note">
+          💡 <span>تحديد الموقع التلقائي عبر GPS يتطلب تطبيقاً رسمياً. في هذا Prototype   .</span>
+        </div>
+
+        <label class="field-label">الولاية</label>
+        <select class="select-field" id="sel-city">
+          <option value="">— اختر الولاية —</option>
+          <option>صور</option>
+          <option>جعلان بني بو حسن</option>
+          <option>جعلان بني بو علي</option>
+          <option>الكامل والوافي</option>
+          <option>مصيرة</option>
+        </select>
+
+        <label class="field-label" style="margin-top:14px;">الطريق / المنطقة</label>
+        <select class="select-field" id="sel-road">
+          <option value="">— اختر الطريق —</option>
+          <option>طريق قريات - صور العام</option>
+          <option>طريق صور - الكامل والوافي</option>
+          <option>طريق جعلان بني بو علي - الأشخرة</option>
+          <option>شارع السوق الرئيسي (صور)</option>
+          <option>طريق مصيرة العام</option>
+          <option>طريق وادي بني جابر</option>
+          <option>شارع المرتفعات</option>
+        </select>
+
+        <div class="time-badge" style="margin-top:14px;">
+          🕐 <span>وقت البلاغ:</span>
+          <span class="time-val" id="current-time"></span>
+        </div>
+
+        <button class="btn-primary" onclick="validateLocation()">متابعة ←</button>
+      </div>
+    </div>
+
+    <div class="screen" id="screen-2">
+      <div class="app-bar">
+        <button class="back-btn" onclick="goTo(1)">→</button>
+        <h2>تقييم حالة الطريق</h2>
+        
+      </div>
+      <div class="screen-body">
+        <p style="font-size:14px;font-weight:700;margin-bottom:16px;">كيف حالة الطريق الآن؟</p>
+
+        <div class="cond-grid">
+          <div class="cond-card" onclick="selectCondition(this,'جيد')">
+            <div class="icon">👍</div>
+            <div class="name">جيد</div>
+          </div>
+          <div class="cond-card" onclick="selectCondition(this,'ازدحام')">
+            <div class="icon">🚗</div>
+            <div class="name">ازدحام</div>
+          </div>
+          <div class="cond-card" onclick="selectCondition(this,'حفرة')" id="cond-pothole">
+            <div class="icon">🕳️</div>
+            <div class="name">حفرة</div>
+          </div>
+          <div class="cond-card" onclick="selectCondition(this,'إدارة مشغولة')">
+            <div class="icon">🚧</div>
+            <div class="name">إدارة مشغولة</div>
+          </div>
+          <div class="cond-card danger-card" onclick="selectCondition(this,'خطر')">
+            <div class="icon">⚠️</div>
+            <div class="name" style="color:var(--danger);">خطر</div>
+          </div>
+        </div>
+
+        <div class="pothole-types" id="potholeTypes" style="display:none;">
+          <h4>نوع الحفرة</h4>
+          <div class="ph-row">
+            <div class="ph-chip" onclick="selectPotholeSize(this,'صغيرة')"><div class="ph-icon"></div>صغيرة</div>
+            <div class="ph-chip" onclick="selectPotholeSize(this,'متوسطة')"><div class="ph-icon"></div>متوسطة</div>
+            <div class="ph-chip" onclick="selectPotholeSize(this,'كبيرة')"><div class="ph-icon"></div>كبيرة</div>
+          </div>
+        </div>
+
+        <button class="btn-primary" onclick="validateCondition()">متابعة ←</button>
+      </div>
+    </div>
+
+    <div class="screen" id="screen-3">
+      <div class="app-bar">
+        <button class="back-btn" onclick="goTo(2)">→</button>
+        <h2>تصوير الضرر</h2>
+       
+      </div>
+      <div class="screen-body">
+        <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.8;">
+          يرجى تصوير الحفرة أو الضرر بوضوح
+        </p>
+
+        <div class="cam-frame" id="camFrame" onclick="document.getElementById('file-input').click()">
+          <div class="cam-overlay">
+            <div class="cam-icon">📷</div>
+            <p>اضغط لتصوير أو اختيار صورة</p>
+          </div>
+          <img id="photo-preview" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:18px;">
+        </div>
+        <input type="file" id="file-input" accept="image/*" capture="environment" onchange="handlePhoto(event)">
+
+        <div class="photo-actions">
+          <button class="photo-btn" onclick="document.getElementById('file-input').click()">
+            📷 كاميرا
+          </button>
+        </div>
+
+        <p style="font-size:12px;color:var(--muted);text-align:center;margin-top:12px;">
+          تأكد من وضوح الصورة
+        </p>
+
+        <button class="btn-primary" onclick="validatePhoto()" id="photoNextBtn">متابعة ←</button>
+      </div>
+    </div>
+
+    <div class="screen" id="screen-4">
+      <div class="app-bar">
+        <button class="back-btn" onclick="goTo(3)">→</button>
+        <h2>مراجعة وإرسال</h2>
+       
+      </div>
+      <div class="screen-body">
+        <div class="review-card">
+          <div class="review-row">
+            <div class="review-icon">📍</div>
+            <div class="review-info">
+              <div class="review-label">الموقع</div>
+              <div class="review-value" id="rv-location">—</div>
+            </div>
+          </div>
+          <div class="review-row">
+            <div class="review-icon">🛣️</div>
+            <div class="review-info">
+              <div class="review-label">حالة الطريق</div>
+              <div class="review-value" id="rv-condition">—</div>
+            </div>
+          </div>
+          <div class="review-row">
+            <div class="review-icon">🕐</div>
+            <div class="review-info">
+              <div class="review-label">الوقت</div>
+              <div class="review-value" id="rv-time">—</div>
+            </div>
+          </div>
+          <div class="review-row">
+            <div class="review-icon">📷</div>
+            <div class="review-info">
+              <div class="review-label">الصورة</div>
+              <div class="review-value" id="rv-photo-label">لم تُرفق صورة</div>
+            </div>
+            <div id="rv-photo-thumb" class="review-thumb-placeholder">🖼️</div>
+          </div>
+        </div>
+
+        <label class="field-label">ملاحظات (اختياري)</label>
+        <textarea class="notes-field" id="notes-field" rows="3" placeholder="أضف أي تفاصيل إضافية هنا..."></textarea>
+
+        <p style="font-size:11px;color:var(--muted);margin-top:10px;line-height:1.8;">
+          سيتم استخدام بياناتك لتحسين جودة الطرق.<br>
+          🔒 بياناتك آمنة ولا تُشارك لأغراض أخرى.
+        </p>
+
+        <button class="btn-primary" onclick="submitReport()">
+           إرسال التقرير
+        </button>
+      </div>
+    </div>
+
+    <div class="screen" id="screen-5">
+      <div class="success-wrap">
+        <div class="success-circle">✅</div>
+        <h2>تم إرسال تقريرك بنجاح</h2>
+        <p>شكراً لمساهمتك في<br>تحسين جودة الطرق</p>
+
+        
+
+        
+
+        <button class="btn-primary" style="margin-top:28px;" onclick="resetAll()">
+          🏠 العودة للرئيسية
+        </button>
+      </div>
+    </div>
+
+  </div></div><script>
+/* ═══════════════════════════════════════════════
+   State
+════════════════════════════════════════════════ */
+let state = {
+  currentStep: 1,
+  location: '',
+  condition: '',
+  potholeSize: '',
+  photo: null,
+  time: ''
+};
+
+/* ═══════════════════════════════════════════════
+   Navigation
+════════════════════════════════════════════════ */
+function goTo(step) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + step).classList.add('active');
+  state.currentStep = step;
+  if (step === 4) fillReview();
+}
+
+/* ═══════════════════════════════════════════════
+   Screen 1 — Location
+════════════════════════════════════════════════ */
+function updateTime() {
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2,'0');
+  const m = String(now.getMinutes()).padStart(2,'0');
+  const ampm = now.getHours() < 12 ? 'ص' : 'م';
+  const timeStr = `${h}:${m} ${ampm}`;
+  const el = document.getElementById('current-time');
+  if (el) { el.textContent = timeStr; state.time = timeStr; }
+}
+updateTime();
+setInterval(updateTime, 30000);
+
+function validateLocation() {
+  const city = document.getElementById('sel-city').value;
+  const road = document.getElementById('sel-road').value;
+  if (!city) { alert('يرجى اختيار الولاية'); return; }
+  if (!road) { alert('يرجى اختيار الطريق'); return; }
+  state.location = `${road}، ${city}، م. جنوب الشرقية`;
+  goTo(2);
+}
+
+/* ═══════════════════════════════════════════════
+   Screen 2 — Condition
+════════════════════════════════════════════════ */
+function selectCondition(el, val) {
+  document.querySelectorAll('.cond-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  state.condition = val;
+  const ph = document.getElementById('potholeTypes');
+  ph.style.display = val === 'حفرة' ? 'block' : 'none';
+  if (val !== 'حفرة') state.potholeSize = '';
+}
+
+function selectPotholeSize(el, size) {
+  document.querySelectorAll('.ph-chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  state.potholeSize = size;
+}
+
+function validateCondition() {
+  if (!state.condition) { alert('يرجى اختيار حالة الطريق'); return; }
+  if (state.condition === 'حفرة' && !state.potholeSize) { alert('يرجى تحديد حجم الحفرة'); return; }
+  goTo(3);
+}
+
+/* ═══════════════════════════════════════════════
+   Screen 3 — Photo
+════════════════════════════════════════════════ */
+function handlePhoto(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    state.photo = ev.target.result;
+    const frame = document.getElementById('camFrame');
+    const preview = document.getElementById('photo-preview');
+    preview.src = ev.target.result;
+    preview.style.display = 'block';
+    frame.classList.add('has-image');
+  };
+  reader.readAsDataURL(file);
+}
+
+function validatePhoto() {
+  if (!state.photo) { alert('يرجى إرفاق صورة للضرر'); return; }
+  goTo(4);
+}
+
+function skipPhoto() {
+  state.photo = null;
+  goTo(4);
+}
+
+/* ═══════════════════════════════════════════════
+   Screen 4 — Review
+════════════════════════════════════════════════ */
+function fillReview() {
+  document.getElementById('rv-location').textContent = state.location || '—';
+  let cond = state.condition;
+  if (state.potholeSize) cond += ` (${state.potholeSize})`;
+  document.getElementById('rv-condition').textContent = cond || '—';
+  document.getElementById('rv-time').textContent = state.time || '—';
+
+  const thumb = document.getElementById('rv-photo-thumb');
+  const label = document.getElementById('rv-photo-label');
+  if (state.photo) {
+    thumb.innerHTML = `<img src="${state.photo}" style="width:60px;height:60px;object-fit:cover;border-radius:10px;">`;
+    label.textContent = 'تم إرفاق صورة ✅';
+  } else {
+    thumb.innerHTML = '🖼️';
+    label.textContent = 'لم تُرفق صورة';
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   Screen 5 — Submit
+════════════════════════════════════════════════ */
+function submitReport() {
+  const btn = document.querySelector('#screen-4 .btn-primary');
+  btn.textContent = ' جاري الإرسال...';
+  btn.disabled = true;
+  setTimeout(() => {
+    const ref = 'OM-2026-' + String(Math.floor(10000 + Math.random() * 89999));
+    document.getElementById('ref-number').textContent = ref;
+    goTo(5);
+    btn.textContent = ' إرسال التقرير';
+    btn.disabled = false;
+  }, 1800);
+}
+
+/* ═══════════════════════════════════════════════
+   Reset
+════════════════════════════════════════════════ */
+function resetAll() {
+  state = { currentStep: 1, location: '', condition: '', potholeSize: '', photo: null, time: '' };
+  document.querySelectorAll('.cond-card').forEach(c => c.classList.remove('selected'));
+  document.querySelectorAll('.ph-chip').forEach(c => c.classList.remove('selected'));
+  document.getElementById('potholeTypes').style.display = 'none';
+  document.getElementById('photo-preview').style.display = 'none';
+  document.getElementById('photo-preview').src = '';
+  document.getElementById('camFrame').classList.remove('has-image');
+  document.getElementById('file-input').value = '';
+  document.getElementById('notes-field').value = '';
+  document.getElementById('sel-city').value = '';
+  document.getElementById('sel-road').value = '';
+  updateTime();
+  goTo(1);
+}
+</script>
+</body>
+</html>

@@ -527,20 +527,32 @@ function validateCondition() {
 function handlePhoto(e) {
   const file = e.target.files[0];
   if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(ev) {
-    state.photo = ev.target.result;
-    const frame = document.getElementById('camFrame');
-    const preview = document.getElementById('photo-preview');
-    preview.src = ev.target.result;
-    preview.style.display = 'block';
-    frame.classList.add('has-image');
-  };
-  reader.readAsDataURL(file);
+  
+  // استخدام طريقة ObjectURL الفورية لتجنب تعليق الهواتف
+  const imageUrl = URL.createObjectURL(file);
+  state.photo = imageUrl;
+  
+  const frame = document.getElementById('camFrame');
+  const preview = document.getElementById('photo-preview');
+  preview.src = imageUrl;
+  preview.style.display = 'block';
+  frame.classList.add('has-image');
 }
 
 function validatePhoto() {
-  if (!state.photo) { alert('يرجى إرفاق صورة للضرر'); return; }
+  const fileInput = document.getElementById('file-input');
+  
+  // فحص مزدوج للتأكد من أن الصورة موجودة حتى لو تأخر النظام
+  if (!state.photo && fileInput.files.length === 0) { 
+    alert('يرجى إرفاق صورة للضرر'); 
+    return; 
+  }
+  
+  // إذا كانت الصورة في الإدخال ولم تحفظ في المتغير، احفظها فوراً
+  if (!state.photo && fileInput.files.length > 0) {
+    state.photo = URL.createObjectURL(fileInput.files[0]);
+  }
+  
   goTo(4);
 }
 

@@ -419,13 +419,16 @@
             <div id="rv-photo-thumb" class="review-thumb-placeholder">🖼️</div>
           </div>
         </div>
-        <input type="file" id="audio-input" accept="audio/*" onchange="handleAudio(event)" style="display: none;">
-
+        
         
         <label class="field-label">ملاحظات (اختياري)</label>
-        <button class="photo-btn" style="margin-top: 12px;" onclick="document.getElementById('audio-input').click()">
-              🎤 تسجيل أو إرفاق صوت
-        </button>
+        <div style="margin-top: 16px; border-top: 1px dashed var(--border-light); padding-top: 16px;">
+          <button class="photo-btn" id="recordBtn" onclick="toggleRecording()" style="border-color: var(--primary); color: var(--primary);">
+            🎤 اضغط لبدء التسجيل الصوتي
+          </button>
+          <audio id="audioPlayback" controls style="display: none; width: 100%; margin-top: 12px; border-radius: 12px;"></audio>
+        </div>
+
         <textarea class="notes-field" id="notes-field" rows="3" placeholder="أضف أي تفاصيل إضافية هنا..."></textarea>
 
         <p style="font-size:11px;color:var(--muted);margin-top:10px;line-height:1.8;">
@@ -586,12 +589,63 @@ function fillReview() {
 /* ═══════════════════════════════════════════════
    Handle Audio (Bonus) 
 ════════════════════════════════════════════════ */
-function handleAudio(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  
-  state.audio = URL.createObjectURL(file);
-  alert('تم إرفاق المقطع الصوتي بنجاح ✅');
+let mediaRecorder;
+let audioChunks = [];
+let isRecording = false;
+
+async function toggleRecording() {
+  const recordBtn = document.getElementById('recordBtn');
+  const audioPlayback = document.getElementById('audioPlayback');
+
+  // إذا كان لا يسجل حالياً -> ابدأ التسجيل
+  if (!isRecording) {
+    try {
+      // طلب صلاحية المايكروفون
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorder = new MediaRecorder(stream);
+      audioChunks = [];
+
+      mediaRecorder.ondataavailable = event => {
+        if (event.data.size > 0) audioChunks.push(event.data);
+      };
+
+      mediaRecorder.onstop = () => {
+        // جمع البيانات الصوتية وإنشاء ملف صوتي
+        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+        state.audio = URL.createObjectURL(audioBlob);
+        
+        // عرض مشغل الصوت للاستماع للتسجيل
+        audioPlayback.src = state.audio;
+        audioPlayback.style.display = 'block';
+      };
+
+      mediaRecorder.start();
+      isRecording = true;
+      
+      // تغيير شكل الزر ليدل على التسجيل
+      recordBtn.innerHTML = '🛑 جاري التسجيل... (اضغط للإيقاف)';
+      recordBtn.style.background = '#fee2e2'; // خلفية حمراء فاتحة
+      recordBtn.style.color = '#ef4444';
+      recordBtn.style.borderColor = '#ef4444';
+
+    } catch (err) {
+      alert('يرجى السماح للموقع بالوصول إلى المايكروفون.');
+    }
+  } 
+  // إذا كان يسجل حالياً -> أوقف التسجيل
+  else {
+    mediaRecorder.stop();
+    // إغلاق المايكروفون بالكامل بعد الانتهاء
+    mediaRecorder.stream.getTracks().forEach(track => track.stop());
+    
+    isRecording = false;
+    
+    // إرجاع شكل الزر
+    recordBtn.innerHTML = '🔄 إعادة التسجيل';
+    recordBtn.style.background = 'var(--surface)';
+    recordBtn.style.color = 'var(--primary)';
+    recordBtn.style.borderColor = 'var(--primary)';
+  }
 }
 /* ═══════════════════════════════════════════════
    Screen 5 — Submit

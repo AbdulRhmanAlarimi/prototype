@@ -419,8 +419,13 @@
             <div id="rv-photo-thumb" class="review-thumb-placeholder">🖼️</div>
           </div>
         </div>
+        <input type="file" id="audio-input" accept="audio/*" capture="microphone" onchange="handleAudio(event)" style="display: none;">
 
+        
         <label class="field-label">ملاحظات (اختياري)</label>
+        <button class="photo-btn" style="margin-top: 12px;" onclick="document.getElementById('audio-input').click()">
+              🎤 تسجيل أو إرفاق صوت
+        </button>
         <textarea class="notes-field" id="notes-field" rows="3" placeholder="أضف أي تفاصيل إضافية هنا..."></textarea>
 
         <p style="font-size:11px;color:var(--muted);margin-top:10px;line-height:1.8;">
@@ -440,26 +445,23 @@
         <h2>تم إرسال تقريرك بنجاح</h2>
         <p>شكراً لمساهمتك في<br>تحسين جودة الطرق</p>
 
+        
+
+        
+
         <button class="btn-primary" style="margin-top:28px;" onclick="resetAll()">
           🏠 العودة للرئيسية
         </button>
       </div>
     </div>
-    
 
   </div></div><script>
 /* ═══════════════════════════════════════════════
    State
 ════════════════════════════════════════════════ */
 let state = {
-  currentStep: 1,
-  location: '',
-  condition: '',
-  potholeSize: '',
-  photo: null,
-  time: ''
+  currentStep: 1, location: '', condition: '', potholeSize: '', photo: null, audio: null, time: ''
 };
-
 /* ═══════════════════════════════════════════════
    Navigation
 ════════════════════════════════════════════════ */
@@ -493,6 +495,8 @@ function validateLocation() {
   state.location = `${road}، ${city}، م. جنوب الشرقية`;
   goTo(2);
 }
+
+
 
 /* ═══════════════════════════════════════════════
    Screen 2 — Condition
@@ -580,15 +584,27 @@ function fillReview() {
 }
 
 /* ═══════════════════════════════════════════════
+   Handle Audio (Bonus) 
+════════════════════════════════════════════════ */
+function handleAudio(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  
+  state.audio = URL.createObjectURL(file);
+  alert('تم إرفاق المقطع الصوتي بنجاح ✅');
+}
+/* ═══════════════════════════════════════════════
    Screen 5 — Submit
 ════════════════════════════════════════════════ */
 function submitReport() {
   const btn = document.querySelector('#screen-4 .btn-primary');
-  btn.textContent = '⏳ جاري الإرسال...';
+  btn.textContent = ' جاري الإرسال...';
   btn.disabled = true;
   setTimeout(() => {
+    const ref = 'OM-2026-' + String(Math.floor(10000 + Math.random() * 89999));
+    document.getElementById('ref-number').textContent = ref;
     goTo(5);
-    btn.textContent = 'إرسال التقرير';
+    btn.textContent = ' إرسال التقرير';
     btn.disabled = false;
   }, 1800);
 }

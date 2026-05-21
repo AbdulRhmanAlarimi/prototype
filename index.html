@@ -46,7 +46,7 @@
     background: var(--white);
     border-radius: 34px;
     overflow: hidden;
-    height: 700px;
+    height: 1030px; 
     display: flex;
     flex-direction: column;
   }
@@ -87,7 +87,7 @@
   }
   @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-8px); } }
 
-  /* ── Condition screen ── */
+  /* ── Condition screen (2 columns) ── */
   .cond-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .cond-card {
     border: 2px solid var(--border); border-radius: 16px;
@@ -95,23 +95,22 @@
     transition: all .2s ease; background: var(--white);
   }
   .cond-card:hover { border-color: var(--navy); transform: translateY(-2px); }
-  .cond-card.selected { border-color: var(--gold); background: #fffbf0; }
+  .cond-card.selected { border-color: var(--navy); background: #f4f7fb; }
   .cond-card .icon { font-size: 32px; margin-bottom: 8px; }
   .cond-card .name { font-size: 14px; font-weight: 700; color: var(--text); }
-  .cond-card.danger-card { grid-column: span 2; border-color: #fcd; background: #fff5f5; }
-  .cond-card.danger-card.selected { border-color: var(--danger); background: #fff0f0; }
-  .pothole-types { margin-top: 20px; }
-  .pothole-types h4 { font-size: 13px; color: var(--muted); margin-bottom: 12px; font-weight: 600; }
-  .ph-row { display: flex; gap: 10px; }
-  .ph-chip {
-    flex: 1; border: 2px solid var(--border); border-radius: 12px;
-    padding: 10px 6px; text-align: center; cursor: pointer;
-    font-size: 12px; font-weight: 700; color: var(--muted);
-    transition: all .2s;
+
+  /* ── Sub-Condition screen (3 columns) ── */
+  .cond-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 16px; }
+  .cond-card-3 {
+    border: 1.5px solid var(--border); border-radius: 14px;
+    padding: 14px 6px; text-align: center; cursor: pointer;
+    transition: all .2s ease; background: var(--white);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.02);
   }
-  .ph-chip:hover { border-color: var(--navy); }
-  .ph-chip.selected { border-color: var(--gold); color: var(--navy); background: #fffbf0; }
-  .ph-chip .ph-icon { font-size: 18px; margin-bottom: 4px; }
+  .cond-card-3:hover { border-color: #3b82f6; transform: translateY(-2px); }
+  .cond-card-3.selected { border-color: #3b82f6; background: #f0f6ff; }
+  .cond-card-3 .icon { font-size: 30px; margin-bottom: 10px; }
+  .cond-card-3 .name { font-size: 10.5px; font-weight: 800; color: var(--navy); line-height: 1.5; }
 
   /* ── Photo screen ── */
   .cam-frame {
@@ -155,10 +154,33 @@
   .review-icon { font-size: 20px; width: 28px; text-align: center; flex-shrink: 0; }
   .review-info { flex: 1; }
   .review-label { font-size: 11px; color: var(--muted); font-weight: 600; margin-bottom: 2px; }
-  .review-value { font-size: 14px; font-weight: 700; color: var(--text); }
+  .review-value { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.4; }
   .review-thumb { width: 60px; height: 60px; border-radius: 10px; object-fit: cover; flex-shrink: 0; }
   .review-thumb-placeholder { width: 60px; height: 60px; border-radius: 10px; background: var(--border);
     display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+
+  /* ── Form fields ── */
+  .field-label { font-size: 13px; font-weight: 700; color: var(--muted); margin-bottom: 8px; display: block; }
+  
+  .select-field {
+    width: 100%; padding: 14px 16px; border: 2px solid var(--border); border-radius: 14px;
+    font-family: 'Cairo', sans-serif; font-size: 14px; font-weight: 600;
+    background: #fff; color: var(--text); outline: none; cursor: pointer;
+    appearance: none; transition: border-color .2s;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%237a8fa6'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: left 12px center; background-size: 20px;
+  }
+  .select-field:focus { border-color: var(--navy); }
+
+  /* حقول الإدخال النصية المضافة حديثاً */
+  .text-input {
+    width: 100%; padding: 14px 16px; border: 2px solid var(--border); border-radius: 14px;
+    font-family: 'Cairo', sans-serif; font-size: 14px; font-weight: 600;
+    background: #fff; color: var(--text); outline: none; transition: border-color .2s;
+    margin-bottom: 14px;
+  }
+  .text-input:focus { border-color: var(--navy); }
+
   .notes-field {
     width: 100%; border: 2px solid var(--border); border-radius: 12px;
     padding: 12px; font-family: 'Cairo', sans-serif; font-size: 13px;
@@ -200,26 +222,17 @@
   }
   .btn-primary:hover { background: var(--navy-light); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(13,34,64,.3); }
   .btn-primary:active { transform: translateY(0); }
-  .btn-primary.gold { background: var(--gold); color: var(--navy); box-shadow: 0 4px 16px rgba(200,164,74,.35); }
-  .btn-primary.gold:hover { background: var(--gold-light); }
-  .btn-ghost {
-    width: 100%; padding: 14px; border: 2px solid var(--border); border-radius: 16px;
-    background: transparent; font-family: 'Cairo', sans-serif; font-size: 15px; font-weight: 700;
-    cursor: pointer; color: var(--text); margin-top: 10px; transition: all .2s;
+  
+  /* زر تقييم رضاء المستخدمين المضاف حديثاً */
+  .btn-dark-blue {
+    width: 100%; padding: 14px; border: none; border-radius: 12px;
+    background: #001253; /* نفس الدرجة اللونية في الصورة */
+    color: #fff; font-family: 'Cairo', sans-serif; font-size: 16px; font-weight: 700;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: all .2s; margin-top: 24px; box-shadow: 0 4px 12px rgba(0, 18, 83, 0.2);
   }
-  .btn-ghost:hover { border-color: var(--navy); color: var(--navy); }
+  .btn-dark-blue:hover { background: #000c3b; transform: translateY(-1px); }
 
-  /* ── Form fields ── */
-  .field-label { font-size: 13px; font-weight: 700; color: var(--muted); margin-bottom: 8px; display: block; }
-  .select-field {
-    width: 100%; padding: 14px 16px; border: 2px solid var(--border); border-radius: 14px;
-    font-family: 'Cairo', sans-serif; font-size: 14px; font-weight: 600;
-    background: #fff; color: var(--text); outline: none; cursor: pointer;
-    appearance: none; transition: border-color .2s;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%237a8fa6'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat; background-position: left 12px center; background-size: 20px;
-  }
-  .select-field:focus { border-color: var(--navy); }
   .time-badge {
     display: flex; align-items: center; gap: 8px;
     background: #f0f4f8; border-radius: 10px; padding: 10px 14px;
@@ -248,7 +261,6 @@
     <div class="screen active" id="screen-1">
       <div class="app-bar">
         <h2>تحديد الموقع  </h2>
-       
       </div>
       <div class="screen-body">
         <div class="map-mock">
@@ -265,10 +277,8 @@
           <div class="map-pin">📍</div>
         </div>
 
-
-        
         <div class="info-note">
-          💡 <span>تحديد الموقع التلقائي عبر GPS يتطلب تطبيقاً رسمياً. في هذا Prototype   .</span>
+          💡 <span>تحديد الموقع التلقائي عبر GPS يتطلب تطبيقاً رسمياً. في هذا Prototype  .</span>
         </div>
 
         <label class="field-label">الولاية</label>
@@ -303,55 +313,99 @@
     </div>
 
     <div class="screen" id="screen-2">
-      <div class="app-bar">
-        <button class="back-btn" onclick="goTo(1)">→</button>
-        <h2>تقييم حالة الطريق</h2>
-        
+      <div class="app-bar" style="background: var(--white); border-bottom: 1px solid var(--border);">
+        <button class="back-btn" onclick="goTo(1)" style="background: transparent; color: var(--navy); font-size: 24px; padding: 0; width: auto; box-shadow: none;">←</button>
+        <h2 style="color: var(--navy); text-align: center; flex: 1; padding-left: 24px; font-weight: 800;">تقييم حالة الطريق</h2>
       </div>
-      <div class="screen-body">
-        <p style="font-size:14px;font-weight:700;margin-bottom:16px;">كيف حالة الطريق الآن؟</p>
+      <div class="screen-body" style="background: var(--white);">
+        <p style="font-size:15px; font-weight:800; margin-bottom:24px; text-align:center; color:var(--navy);">ما نوع المشكلة التي لاحظتها؟</p>
 
         <div class="cond-grid">
-          <div class="cond-card" onclick="selectCondition(this,'جيد')">
-            <div class="icon">👍</div>
-            <div class="name">جيد</div>
+          <div class="cond-card" onclick="selectCondition(this,'أضرار الطريق')">
+            <div class="icon" style="font-size: 38px;">🪨</div>
+            <div class="name" style="color: var(--navy);">أضرار الطريق</div>
           </div>
-          <div class="cond-card" onclick="selectCondition(this,'ازدحام')">
-            <div class="icon">🚗</div>
-            <div class="name">ازدحام</div>
+          <div class="cond-card" onclick="selectCondition(this,'السلامة المرورية')">
+            <div class="icon" style="font-size: 38px;">⚠️</div>
+            <div class="name" style="color: var(--navy);">السلامة المرورية</div>
           </div>
-          <div class="cond-card" onclick="selectCondition(this,'حفرة')" id="cond-pothole">
-            <div class="icon">🕳️</div>
+          <div class="cond-card" onclick="selectCondition(this,'الإنارة والمعدات')">
+            <div class="icon" style="font-size: 38px;">💡</div>
+            <div class="name" style="color: var(--navy);">الإنارة والمعدات</div>
+          </div>
+          <div class="cond-card" onclick="selectCondition(this,'العوامل الطبيعية')">
+            <div class="icon" style="font-size: 38px;">🌧️</div>
+            <div class="name" style="color: var(--navy);">العوامل الطبيعية</div>
+          </div>
+          <div class="cond-card" onclick="selectCondition(this,'الحواجز والمنشآت')">
+            <div class="icon" style="font-size: 38px;">🌉</div>
+            <div class="name" style="color: var(--navy);">الحواجز والمنشآت</div>
+          </div>
+          <div class="cond-card" onclick="selectCondition(this,'الحركة المرورية')">
+            <div class="icon" style="font-size: 38px;">🚙</div>
+            <div class="name" style="color: var(--navy);">الحركة المرورية</div>
+          </div>
+        </div>
+
+        <button class="btn-primary" onclick="validateCondition()" style="margin-top: 16px;">متابعة ←</button>
+      </div>
+    </div>
+
+    <div class="screen" id="screen-2-sub">
+      <div class="app-bar" style="background: var(--white); border-bottom: 1px solid var(--border);">
+        <button class="back-btn" onclick="goTo(2)" style="background: transparent; color: var(--navy); font-size: 24px; padding: 0; width: auto; box-shadow: none;">←</button>
+        <h2 style="color: var(--navy); text-align: center; flex: 1; font-weight: 800;">أضرار الطريق</h2>
+        <div class="app-logo" style="background:transparent; font-size: 24px; color: var(--navy);">🛣️</div>
+      </div>
+      <div class="screen-body" style="background: var(--white); padding: 16px 14px;">
+        <div style="text-align: center; margin-bottom: 10px;">
+          <h3 style="font-size: 16px; font-weight: 800; color: var(--text);">اختر نوع الضرر</h3>
+          <p style="font-size: 12px; color: #3b82f6; margin-top: 4px; font-weight: 600;">يمكنك اختيار نوع واحد فقط</p>
+        </div>
+
+        <div class="cond-grid-3">
+          <div class="cond-card-3" onclick="selectSubCondition(this,'حفرة')">
             <div class="name">حفرة</div>
           </div>
-          <div class="cond-card" onclick="selectCondition(this,'إدارة مشغولة')">
-            <div class="icon">🚧</div>
-            <div class="name">إدارة مشغولة</div>
+          <div class="cond-card-3" onclick="selectSubCondition(this,'تشققات')">
+           <div class="name">تشققات</div>
           </div>
-          <div class="cond-card danger-card" onclick="selectCondition(this,'خطر')">
-            <div class="icon">⚠️</div>
-            <div class="name" style="color:var(--danger);">خطر</div>
+          <div class="cond-card-3" onclick="selectSubCondition(this,'هبوط أو تآكل الطريق')">
+            <div class="name">هبوط أو تآكل<br>الطريق</div>
+          </div>
+          <div class="cond-card-3" onclick="selectSubCondition(this,'تلف الأرصفة')">
+            <div class="name">تلف الأرصفة</div>
+          </div>
+          <div class="cond-card-3" onclick="selectSubCondition(this,'تلف الحواجز الحديدية')">
+           <div class="name">تلف الحواجز<br>الحديدية</div>
+          </div>
+          <div class="cond-card-3" onclick="selectSubCondition(this,'اهتزاز الطريق أو سوء السفلتة')">
+            <div class="name">اهتزاز الطريق أو<br>سوء السفلتة</div>
+          </div>
+          <div class="cond-card-3" onclick="selectSubCondition(this,'الطرق غير المعبدة المتضررة')">
+            <div class="name">الطرق غير المعبدة<br>المتضررة</div>
+          </div>
+          <div class="cond-card-3" onclick="selectSubCondition(this,'تلف الجسور أو العبارات')">
+            <div class="name">تلف الجسور<br>أو العبارات</div>
+          </div>
+          <div class="cond-card-3" onclick="selectSubCondition(this,'صيانة الأنفاق والجسور')">
+            <div class="name">صيانة الأنفاق<br>والجسور</div>
           </div>
         </div>
 
-        <div class="pothole-types" id="potholeTypes" style="display:none;">
-          <h4>نوع الحفرة</h4>
-          <div class="ph-row">
-            <div class="ph-chip" onclick="selectPotholeSize(this,'صغيرة')"><div class="ph-icon"></div>صغيرة</div>
-            <div class="ph-chip" onclick="selectPotholeSize(this,'متوسطة')"><div class="ph-icon"></div>متوسطة</div>
-            <div class="ph-chip" onclick="selectPotholeSize(this,'كبيرة')"><div class="ph-icon"></div>كبيرة</div>
-          </div>
+        <div style="background: #f4f7fb; border-radius: 16px; padding: 14px; display: flex; align-items: center; gap: 12px; color: var(--navy); font-weight: 700; font-size: 12px; margin-top: 24px;">
+          <div style="width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid var(--navy); display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;">i</div>
+          <span>اختر نوع الضرر الذي لاحظته على الطريق</span>
         </div>
 
-        <button class="btn-primary" onclick="validateCondition()">متابعة ←</button>
+        <button class="btn-primary" onclick="validateSubCondition()" style="margin-top: 20px;">متابعة ←</button>
       </div>
     </div>
 
     <div class="screen" id="screen-3">
       <div class="app-bar">
-        <button class="back-btn" onclick="goTo(2)">→</button>
+        <button class="back-btn" onclick="goBackFromPhoto()">→</button>
         <h2>تصوير الضرر</h2>
-       
       </div>
       <div class="screen-body">
         <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.8;">
@@ -385,7 +439,6 @@
       <div class="app-bar">
         <button class="back-btn" onclick="goTo(3)">→</button>
         <h2>مراجعة وإرسال</h2>
-       
       </div>
       <div class="screen-body">
         <div class="review-card">
@@ -420,16 +473,21 @@
           </div>
         </div>
         
-        
-        <label class="field-label">ملاحظات (اختياري)</label>
-        <div style="margin-top: 16px; border-top: 1px dashed var(--border-light); padding-top: 16px;">
-          <button class="photo-btn" id="recordBtn" onclick="toggleRecording()" style="border-color: var(--primary); color: var(--primary);">
+        <label class="field-label">الاسم </label>
+        <input type="text" id="user-name" class="text-input" placeholder=" اسمك الكريم">
+
+        <label class="field-label">رقم الهاتف</label>
+        <input type="tel" id="user-phone" class="text-input" placeholder=" رقم هاتفك">
+
+        <label class="field-label">ملاحظات إضافية</label>
+        <div style="margin-top: 8px; border-top: 1px dashed var(--border); padding-top: 12px;">
+          <button class="photo-btn" id="recordBtn" onclick="toggleRecording()" style="border-color: var(--navy); color: var(--navy);">
             🎤 اضغط لبدء التسجيل الصوتي
           </button>
           <audio id="audioPlayback" controls style="display: none; width: 100%; margin-top: 12px; border-radius: 12px;"></audio>
         </div>
 
-        <textarea class="notes-field" id="notes-field" rows="3" placeholder="أضف أي تفاصيل إضافية هنا..."></textarea>
+        <textarea class="notes-field" id="notes-field" rows="2" placeholder="أضف أي تفاصيل إضافية هنا..."></textarea>
 
         <p style="font-size:11px;color:var(--muted);margin-top:10px;line-height:1.8;">
           سيتم استخدام بياناتك لتحسين جودة الطرق.<br>
@@ -448,23 +506,27 @@
         <h2>تم إرسال تقريرك بنجاح</h2>
         <p>شكراً لمساهمتك في<br>تحسين جودة الطرق</p>
 
-        
+        <button class="btn-dark-blue" onclick="alert('سيتم تحويلك لصفحة التقييم...')">
+          قياس رضاء المستخدمين
+        </button>
 
-        
-
-        <button class="btn-primary" style="margin-top:28px;" onclick="resetAll()">
+        <button class="btn-primary" style="margin-top:16px; background: #fff; color: var(--navy); border: 2px solid var(--border); box-shadow: none;" onclick="resetAll()">
           🏠 العودة للرئيسية
         </button>
       </div>
     </div>
 
-  </div></div><script>
+  </div>
+</div>
+
+<script>
 /* ═══════════════════════════════════════════════
    State
 ════════════════════════════════════════════════ */
 let state = {
-  currentStep: 1, location: '', condition: '', potholeSize: '', photo: null, audio: null, time: ''
+  currentStep: 1, location: '', condition: '', subCondition: '', photo: null, audio: null, time: '', userName: '', userPhone: ''
 };
+
 /* ═══════════════════════════════════════════════
    Navigation
 ════════════════════════════════════════════════ */
@@ -473,6 +535,14 @@ function goTo(step) {
   document.getElementById('screen-' + step).classList.add('active');
   state.currentStep = step;
   if (step === 4) fillReview();
+}
+
+function goBackFromPhoto() {
+  if (state.condition === 'أضرار الطريق') {
+    goTo('2-sub');
+  } else {
+    goTo(2);
+  }
 }
 
 /* ═══════════════════════════════════════════════
@@ -499,29 +569,38 @@ function validateLocation() {
   goTo(2);
 }
 
-
-
 /* ═══════════════════════════════════════════════
-   Screen 2 — Condition
+   Screen 2 — Main Condition
 ════════════════════════════════════════════════ */
 function selectCondition(el, val) {
-  document.querySelectorAll('.cond-card').forEach(c => c.classList.remove('selected'));
+  document.querySelectorAll('#screen-2 .cond-card').forEach(c => c.classList.remove('selected'));
   el.classList.add('selected');
   state.condition = val;
-  const ph = document.getElementById('potholeTypes');
-  ph.style.display = val === 'حفرة' ? 'block' : 'none';
-  if (val !== 'حفرة') state.potholeSize = '';
-}
-
-function selectPotholeSize(el, size) {
-  document.querySelectorAll('.ph-chip').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
-  state.potholeSize = size;
+  state.subCondition = '';
+  document.querySelectorAll('.cond-card-3').forEach(c => c.classList.remove('selected'));
 }
 
 function validateCondition() {
-  if (!state.condition) { alert('يرجى اختيار حالة الطريق'); return; }
-  if (state.condition === 'حفرة' && !state.potholeSize) { alert('يرجى تحديد حجم الحفرة'); return; }
+  if (!state.condition) { alert('يرجى اختيار الفئة'); return; }
+  
+  if (state.condition === 'أضرار الطريق') {
+    goTo('2-sub');
+  } else {
+    goTo(3);
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   Screen 2-SUB — Specific Damage
+════════════════════════════════════════════════ */
+function selectSubCondition(el, val) {
+  document.querySelectorAll('.cond-card-3').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  state.subCondition = val;
+}
+
+function validateSubCondition() {
+  if (!state.subCondition) { alert('يرجى اختيار نوع الضرر أولاً'); return; }
   goTo(3);
 }
 
@@ -531,8 +610,6 @@ function validateCondition() {
 function handlePhoto(e) {
   const file = e.target.files[0];
   if (!file) return;
-  
-  // استخدام طريقة ObjectURL الفورية لتجنب تعليق الهواتف
   const imageUrl = URL.createObjectURL(file);
   state.photo = imageUrl;
   
@@ -545,23 +622,13 @@ function handlePhoto(e) {
 
 function validatePhoto() {
   const fileInput = document.getElementById('file-input');
-  
-  // فحص مزدوج للتأكد من أن الصورة موجودة حتى لو تأخر النظام
   if (!state.photo && fileInput.files.length === 0) { 
     alert('يرجى إرفاق صورة للضرر'); 
     return; 
   }
-  
-  // إذا كانت الصورة في الإدخال ولم تحفظ في المتغير، احفظها فوراً
   if (!state.photo && fileInput.files.length > 0) {
     state.photo = URL.createObjectURL(fileInput.files[0]);
   }
-  
-  goTo(4);
-}
-
-function skipPhoto() {
-  state.photo = null;
   goTo(4);
 }
 
@@ -570,9 +637,12 @@ function skipPhoto() {
 ════════════════════════════════════════════════ */
 function fillReview() {
   document.getElementById('rv-location').textContent = state.location || '—';
-  let cond = state.condition;
-  if (state.potholeSize) cond += ` (${state.potholeSize})`;
-  document.getElementById('rv-condition').textContent = cond || '—';
+  
+  let finalCondition = state.condition;
+  if (state.subCondition) {
+    finalCondition += ` - ${state.subCondition}`;
+  }
+  document.getElementById('rv-condition').textContent = finalCondition || '—';
   document.getElementById('rv-time').textContent = state.time || '—';
 
   const thumb = document.getElementById('rv-photo-thumb');
@@ -587,7 +657,7 @@ function fillReview() {
 }
 
 /* ═══════════════════════════════════════════════
-   Handle Audio (Bonus) 
+   Handle Audio 
 ════════════════════════════════════════════════ */
 let mediaRecorder;
 let audioChunks = [];
@@ -597,10 +667,8 @@ async function toggleRecording() {
   const recordBtn = document.getElementById('recordBtn');
   const audioPlayback = document.getElementById('audioPlayback');
 
-  // إذا كان لا يسجل حالياً -> ابدأ التسجيل
   if (!isRecording) {
     try {
-      // طلب صلاحية المايكروفون
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       mediaRecorder = new MediaRecorder(stream);
       audioChunks = [];
@@ -610,11 +678,8 @@ async function toggleRecording() {
       };
 
       mediaRecorder.onstop = () => {
-        // جمع البيانات الصوتية وإنشاء ملف صوتي
         const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
         state.audio = URL.createObjectURL(audioBlob);
-        
-        // عرض مشغل الصوت للاستماع للتسجيل
         audioPlayback.src = state.audio;
         audioPlayback.style.display = 'block';
       };
@@ -622,9 +687,8 @@ async function toggleRecording() {
       mediaRecorder.start();
       isRecording = true;
       
-      // تغيير شكل الزر ليدل على التسجيل
       recordBtn.innerHTML = '🛑 جاري التسجيل... (اضغط للإيقاف)';
-      recordBtn.style.background = '#fee2e2'; // خلفية حمراء فاتحة
+      recordBtn.style.background = '#fee2e2'; 
       recordBtn.style.color = '#ef4444';
       recordBtn.style.borderColor = '#ef4444';
 
@@ -632,31 +696,37 @@ async function toggleRecording() {
       alert('يرجى السماح للموقع بالوصول إلى المايكروفون.');
     }
   } 
-  // إذا كان يسجل حالياً -> أوقف التسجيل
   else {
     mediaRecorder.stop();
-    // إغلاق المايكروفون بالكامل بعد الانتهاء
     mediaRecorder.stream.getTracks().forEach(track => track.stop());
-    
     isRecording = false;
     
-    // إرجاع شكل الزر
     recordBtn.innerHTML = '🔄 إعادة التسجيل';
-    recordBtn.style.background = 'var(--surface)';
-    recordBtn.style.color = 'var(--primary)';
-    recordBtn.style.borderColor = 'var(--primary)';
+    recordBtn.style.background = '#fff';
+    recordBtn.style.color = 'var(--navy)';
+    recordBtn.style.borderColor = 'var(--navy)';
   }
 }
+
 /* ═══════════════════════════════════════════════
    Screen 5 — Submit
 ════════════════════════════════════════════════ */
 function submitReport() {
+  const nameInput = document.getElementById('user-name').value;
+  const phoneInput = document.getElementById('user-phone').value;
+  
+  if(!nameInput || !phoneInput) {
+    const proceed = confirm('لم تقم بإدخال الاسم أو رقم الهاتف. هل تريد المتابعة على أية حال؟');
+    if(!proceed) return;
+  }
+
+  state.userName = nameInput;
+  state.userPhone = phoneInput;
+
   const btn = document.querySelector('#screen-4 .btn-primary');
   btn.textContent = ' جاري الإرسال...';
   btn.disabled = true;
   setTimeout(() => {
-    const ref = 'OM-2026-' + String(Math.floor(10000 + Math.random() * 89999));
-    document.getElementById('ref-number').textContent = ref;
     goTo(5);
     btn.textContent = ' إرسال التقرير';
     btn.disabled = false;
@@ -667,10 +737,9 @@ function submitReport() {
    Reset
 ════════════════════════════════════════════════ */
 function resetAll() {
-  state = { currentStep: 1, location: '', condition: '', potholeSize: '', photo: null, time: '' };
+  state = { currentStep: 1, location: '', condition: '', subCondition: '', photo: null, time: '', userName: '', userPhone: '' };
   document.querySelectorAll('.cond-card').forEach(c => c.classList.remove('selected'));
-  document.querySelectorAll('.ph-chip').forEach(c => c.classList.remove('selected'));
-  document.getElementById('potholeTypes').style.display = 'none';
+  document.querySelectorAll('.cond-card-3').forEach(c => c.classList.remove('selected'));
   document.getElementById('photo-preview').style.display = 'none';
   document.getElementById('photo-preview').src = '';
   document.getElementById('camFrame').classList.remove('has-image');
@@ -678,6 +747,8 @@ function resetAll() {
   document.getElementById('notes-field').value = '';
   document.getElementById('sel-city').value = '';
   document.getElementById('sel-road').value = '';
+  document.getElementById('user-name').value = '';
+  document.getElementById('user-phone').value = '';
   updateTime();
   goTo(1);
 }
